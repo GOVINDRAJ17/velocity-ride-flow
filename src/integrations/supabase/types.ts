@@ -14,7 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      rides: {
+        Row: {
+          created_at: string | null
+          dropoff_location: string
+          fare_estimate: number | null
+          id: string
+          pickup_location: string
+          ride_date: string
+          ride_mode: string | null
+          ride_type: string
+          seats_available: number | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+          vehicle_details: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          dropoff_location: string
+          fare_estimate?: number | null
+          id?: string
+          pickup_location: string
+          ride_date: string
+          ride_mode?: string | null
+          ride_type: string
+          seats_available?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+          vehicle_details?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          dropoff_location?: string
+          fare_estimate?: number | null
+          id?: string
+          pickup_location?: string
+          ride_date?: string
+          ride_mode?: string | null
+          ride_type?: string
+          seats_available?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+          vehicle_details?: string | null
+        }
+        Relationships: []
+      }
+      schedules: {
+        Row: {
+          created_at: string | null
+          from_location: string
+          id: string
+          notes: string | null
+          scheduled_date: string
+          status: string | null
+          to_location: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          from_location: string
+          id?: string
+          notes?: string | null
+          scheduled_date: string
+          status?: string | null
+          to_location: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          from_location?: string
+          id?: string
+          notes?: string | null
+          scheduled_date?: string
+          status?: string | null
+          to_location?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      split_payments: {
+        Row: {
+          created_at: string | null
+          creator_id: string
+          id: string
+          participants: Json
+          ride_id: string | null
+          status: string | null
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          creator_id: string
+          id?: string
+          participants: Json
+          ride_id?: string | null
+          status?: string | null
+          total_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          creator_id?: string
+          id?: string
+          participants?: Json
+          ride_id?: string | null
+          status?: string | null
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "split_payments_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
