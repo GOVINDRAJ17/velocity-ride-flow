@@ -1,11 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
   const scrollToCreate = () => {
     const element = document.querySelector("#create");
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleGetStarted = () => {
+    if (user) {
+      scrollToCreate();
+    } else {
+      navigate("/auth");
     }
   };
 
@@ -31,7 +44,7 @@ const Hero = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.4s" }}>
             <Button 
-              onClick={scrollToCreate}
+              onClick={handleGetStarted}
               size="lg" 
               className="bg-white text-primary hover:bg-white/90 hover:shadow-hover transition-smooth text-lg px-8 py-6 group"
             >

@@ -1,73 +1,138 @@
-# Welcome to your Lovable project
-
-## Project info
+# Velocity - Modern Ride Sharing Platform
 
 **URL**: https://lovable.dev/projects/694863b8-29a0-4685-a70b-4b3321bf61d5
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+### Core Functionality
+- **Book Rides**: Search and book rides with real-time fare estimates
+- **Offer Rides**: Share your car and earn while helping others
+- **Smart Scheduling**: Plan future rides with an interactive calendar
+- **Payment Splitting**: Split ride costs easily like GPay
+- **Ride Radio**: Enjoy music, podcasts, and news during your journey
+- **Weather Integration**: Check weather conditions before your ride
+- **Location Services**: Find nearby rides with map preview
 
-**Use Lovable**
+### User Experience
+- **Authentication**: Secure login/signup with email
+- **Dark Mode**: Toggle between light and dark themes
+- **Responsive Design**: Beautiful UI on all devices
+- **Real-time Updates**: Live ride tracking and notifications
+- **Profile Management**: Manage your account and preferences
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/694863b8-29a0-4685-a70b-4b3321bf61d5) and start prompting.
+## 🛠 Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, Shadcn/UI components
+- **Backend**: Lovable Cloud (Supabase)
+- **Database**: PostgreSQL with Row Level Security
+- **State Management**: React Context API
+- **Routing**: React Router v6
+- **Forms**: React Hook Form with Zod validation
 
-**Use your preferred IDE**
+## 🗄️ Database Schema
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Tables
+- **profiles**: User profile information
+- **rides**: Ride bookings and offers
+- **schedules**: Scheduled future rides
+- **split_payments**: Payment splitting records
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Security
+- Row Level Security (RLS) enabled on all tables
+- User data isolation with auth.uid()
+- Secure triggers and functions
 
-Follow these steps:
+## 🎨 Design System
+
+### Colors
+- Primary: Blue (#3B82F6)
+- Secondary: Purple gradient
+- Accent: Vibrant purple/cyan
+
+### Typography
+- Font: Inter (Google Fonts)
+- Modern, clean, and minimal aesthetic
+
+### Animations
+- Smooth transitions (0.3s cubic-bezier)
+- Hover effects with shadows
+- Gradient animations on hero section
+
+## 🔐 Authentication
+
+- Email/Password authentication
+- Auto-confirm email for faster development
+- Protected routes for authenticated users
+- Session management with Supabase Auth
+
+## 🚦 Getting Started
+
+### Prerequisites
+- Node.js & npm installed ([install with nvm](https://github.com/nvm-sh/nvm))
+
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to project
+cd velocity
 
-# Step 3: Install the necessary dependencies.
+# Install dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Setup
+The project uses Lovable Cloud (Supabase) which is pre-configured. No additional environment variables needed.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📱 Usage
 
-**Use GitHub Codespaces**
+1. **Sign Up**: Create an account with email
+2. **Browse**: Explore available rides or offer your own
+3. **Book**: Select pickup/drop-off locations and time
+4. **Split**: Share ride costs with fellow passengers
+5. **Schedule**: Plan future rides in advance
+6. **Enjoy**: Listen to music while you ride!
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🎯 Roadmap
 
-## What technologies are used for this project?
+- [ ] Real-time ride tracking with GPS
+- [ ] In-app messaging between riders
+- [ ] Rating and review system
+- [ ] Payment gateway integration
+- [ ] Push notifications
+- [ ] Google Maps integration
+- [ ] Multi-language support
 
-This project is built with:
+## 🤝 Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+This project is built with Lovable. To contribute:
 
-## How can I deploy this project?
+1. Visit the [Lovable Project](https://lovable.dev/projects/694863b8-29a0-4685-a70b-4b3321bf61d5)
+2. Make changes via prompts or code editor
+3. Changes are committed automatically
 
-Simply open [Lovable](https://lovable.dev/projects/694863b8-29a0-4685-a70b-4b3321bf61d5) and click on Share -> Publish.
+## 📄 License
 
-## Can I connect a custom domain to my Lovable project?
+MIT License - feel free to use this project for your own purposes.
 
-Yes, you can!
+## 🔗 Links
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- [Lovable Documentation](https://docs.lovable.dev/)
+- [Lovable Cloud](https://docs.lovable.dev/features/cloud)
+- [Project URL](https://lovable.dev/projects/694863b8-29a0-4685-a70b-4b3321bf61d5)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 💡 Support
+
+For issues or questions:
+- Check the [Lovable Docs](https://docs.lovable.dev/)
+- Join the [Lovable Discord](https://discord.com/channels/1119885301872070706/1280461670979993613)
+
+---
+
+Built with ❤️ using [Lovable](https://lovable.dev)

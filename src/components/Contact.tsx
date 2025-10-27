@@ -20,6 +20,9 @@ const Contact = () => {
       toast.error("Please fill in all fields");
       return;
     }
+    
+    // In a real app, this would send to backend
+    console.log("Contact form submitted:", formData);
     toast.success("Message sent! We'll get back to you soon.");
     setFormData({ name: "", email: "", message: "" });
   };

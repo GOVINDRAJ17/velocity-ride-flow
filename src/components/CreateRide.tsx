@@ -6,8 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Calendar, DollarSign, Users, Car } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const CreateRide = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [bookingData, setBookingData] = useState({
     pickup: "",
     dropoff: "",
@@ -23,20 +29,76 @@ const CreateRide = () => {
     timing: "",
   });
 
-  const handleBookRide = () => {
+  const handleBookRide = async () => {
+    if (!user) {
+      toast.error("Please login to book a ride");
+      navigate("/auth");
+      return;
+    }
+
     if (!bookingData.pickup || !bookingData.dropoff || !bookingData.time) {
       toast.error("Please fill in all fields");
       return;
     }
-    toast.success("Ride booked successfully! Finding nearby drivers...");
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("rides").insert({
+        user_id: user.id,
+        ride_type: "book",
+        pickup_location: bookingData.pickup,
+        dropoff_location: bookingData.dropoff,
+        ride_date: bookingData.time,
+        ride_mode: bookingData.type,
+        fare_estimate: 12.50,
+        status: "pending",
+      });
+
+      if (error) throw error;
+
+      toast.success("Ride booked successfully! Finding nearby drivers...");
+      setBookingData({ pickup: "", dropoff: "", time: "", type: "solo" });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to book ride");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleOfferRide = () => {
+  const handleOfferRide = async () => {
+    if (!user) {
+      toast.error("Please login to offer a ride");
+      navigate("/auth");
+      return;
+    }
+
     if (!offerData.driverName || !offerData.vehicle || !offerData.seats) {
       toast.error("Please fill in all fields");
       return;
     }
-    toast.success("Ride offer posted! Passengers will be notified.");
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("rides").insert({
+        user_id: user.id,
+        ride_type: "offer",
+        pickup_location: offerData.route.split("→")[0]?.trim() || "Starting point",
+        dropoff_location: offerData.route.split("→")[1]?.trim() || "Destination",
+        ride_date: offerData.timing,
+        seats_available: parseInt(offerData.seats),
+        vehicle_details: `${offerData.driverName} - ${offerData.vehicle}`,
+        status: "pending",
+      });
+
+      if (error) throw error;
+
+      toast.success("Ride offer posted! Passengers will be notified.");
+      setOfferData({ driverName: "", vehicle: "", seats: "", route: "", timing: "" });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to post ride offer");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -134,8 +196,8 @@ const CreateRide = () => {
                     </div>
                   </div>
 
-                  <Button onClick={handleBookRide} className="w-full gradient-primary text-primary-foreground hover:shadow-hover transition-smooth text-lg py-6">
-                    Confirm Booking
+                  <Button onClick={handleBookRide} disabled={loading} className="w-full gradient-primary text-primary-foreground hover:shadow-hover transition-smooth text-lg py-6">
+                    {loading ? "Booking..." : "Confirm Booking"}
                   </Button>
                 </CardContent>
               </Card>
@@ -206,8 +268,8 @@ const CreateRide = () => {
                     />
                   </div>
 
-                  <Button onClick={handleOfferRide} className="w-full gradient-primary text-primary-foreground hover:shadow-hover transition-smooth text-lg py-6">
-                    Post Ride Offer
+                  <Button onClick={handleOfferRide} disabled={loading} className="w-full gradient-primary text-primary-foreground hover:shadow-hover transition-smooth text-lg py-6">
+                    {loading ? "Posting..." : "Post Ride Offer"}
                   </Button>
                 </CardContent>
               </Card>

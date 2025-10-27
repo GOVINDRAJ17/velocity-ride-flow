@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Moon, Sun, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Home", href: "#home" },
@@ -47,14 +53,49 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Login/Signup Button */}
+          {/* Theme Toggle & Auth */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-sm font-medium">
-              Login
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="rounded-full"
+            >
+              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </Button>
-            <Button className="gradient-primary text-primary-foreground hover:shadow-hover transition-smooth">
-              Sign Up
-            </Button>
+            
+            {user ? (
+              <>
+                <Button variant="ghost" className="text-sm font-medium gap-2">
+                  <User size={18} />
+                  {user.email}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => signOut()}
+                  className="gap-2"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  className="text-sm font-medium"
+                  onClick={() => navigate("/auth")}
+                >
+                  Login
+                </Button>
+                <Button
+                  className="gradient-primary text-primary-foreground hover:shadow-hover transition-smooth"
+                  onClick={() => navigate("/auth")}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -83,12 +124,56 @@ const Navbar = () => {
               </button>
             ))}
             <div className="pt-4 pb-2 space-y-2">
-              <Button variant="ghost" className="w-full">
-                Login
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="w-full"
+              >
+                {theme === "light" ? (
+                  <>
+                    <Moon size={20} className="mr-2" />
+                    Dark Mode
+                  </>
+                ) : (
+                  <>
+                    <Sun size={20} className="mr-2" />
+                    Light Mode
+                  </>
+                )}
               </Button>
-              <Button className="w-full gradient-primary text-primary-foreground">
-                Sign Up
-              </Button>
+              
+              {user ? (
+                <>
+                  <div className="px-3 py-2 text-sm text-muted-foreground">
+                    {user.email}
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => signOut()}
+                    className="w-full gap-2"
+                  >
+                    <LogOut size={18} />
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => navigate("/auth")}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    className="w-full gradient-primary text-primary-foreground"
+                    onClick={() => navigate("/auth")}
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

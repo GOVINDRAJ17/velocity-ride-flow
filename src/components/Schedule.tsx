@@ -1,18 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays, Clock, MapPin, Plus } from "lucide-react";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Schedule = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [schedules, setSchedules] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const upcomingRides = [
-    { id: 1, from: "Downtown", to: "Airport", date: "Today", time: "3:00 PM", status: "confirmed" },
-    { id: 2, from: "Home", to: "Office", date: "Tomorrow", time: "8:30 AM", status: "pending" },
-    { id: 3, from: "Mall", to: "Restaurant", date: "Dec 30", time: "7:00 PM", status: "confirmed" },
-  ];
+  useEffect(() => {
+    if (user) {
+      fetchSchedules();
+    }
+  }, [user]);
+
+  const fetchSchedules = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("schedules")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("scheduled_date", { ascending: true })
+        .limit(5);
+
+      if (error) throw error;
+      setSchedules(data || []);
+    } catch (error: any) {
+      console.error("Error fetching schedules:", error);
+    }
+  };
+
+  const handleAddSchedule = () => {
+    if (!user) {
+      toast.error("Please login to schedule rides");
+      navigate("/auth");
+      return;
+    }
+    toast.info("Schedule feature coming soon!");
+  };
+
+  const handleModify = (id: string) => {
+    toast.info("Modify feature coming soon!");
+  };
+
+  const handleCancel = async (id: string) => {
+    if (!user) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from("schedules")
+        .update({ status: "cancelled" })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      toast.success("Schedule cancelled");
+      fetchSchedules();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to cancel");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section id="schedule" className="py-20 bg-muted/30">
@@ -47,7 +107,7 @@ const Schedule = () => {
                   </div>
                 )}
                 
-                <Button className="w-full mt-4 gradient-primary text-primary-foreground hover:shadow-hover transition-smooth">
+                <Button className="w-full mt-4 gradient-primary text-primary-foreground hover:shadow-hover transition-smooth" onClick={handleAddSchedule}>
                   <Plus className="mr-2" size={20} />
                   Schedule New Ride
                 </Button>
@@ -64,52 +124,67 @@ const Schedule = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {upcomingRides.map((ride) => (
-                <div
-                  key={ride.id}
-                  className="border border-border rounded-lg p-4 hover:shadow-soft transition-smooth bg-card"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <MapPin size={16} className="text-primary" />
-                      <div>
-                        <div className="font-semibold">{ride.from} → {ride.to}</div>
+              {schedules.length > 0 ? (
+                schedules.map((ride) => (
+                  <div
+                    key={ride.id}
+                    className="border border-border rounded-lg p-4 hover:shadow-soft transition-smooth bg-card"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <MapPin size={16} className="text-primary" />
+                        <div>
+                          <div className="font-semibold">{ride.from_location} → {ride.to_location}</div>
+                        </div>
+                      </div>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          ride.status === "confirmed"
+                            ? "bg-green-500/10 text-green-600"
+                            : ride.status === "cancelled"
+                            ? "bg-red-500/10 text-red-600"
+                            : "bg-yellow-500/10 text-yellow-600"
+                        }`}
+                      >
+                        {ride.status}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <CalendarDays size={14} />
+                        {format(new Date(ride.scheduled_date), "MMM d")}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock size={14} />
+                        {format(new Date(ride.scheduled_date), "h:mm a")}
                       </div>
                     </div>
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        ride.status === "confirmed"
-                          ? "bg-green-500/10 text-green-600"
-                          : "bg-yellow-500/10 text-yellow-600"
-                      }`}
-                    >
-                      {ride.status}
-                    </span>
+                    
+                    {ride.status !== "cancelled" && (
+                      <div className="mt-3 flex gap-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={() => handleModify(ride.id)}
+                        >
+                          Modify
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleCancel(ride.id)}
+                          disabled={loading}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <CalendarDays size={14} />
-                      {ride.date}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock size={14} />
-                      {ride.time}
-                    </div>
-                  </div>
-                  
-                  <div className="mt-3 flex gap-2">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      Modify
-                    </Button>
-                    <Button size="sm" variant="outline" className="text-destructive hover:text-destructive">
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              
-              {upcomingRides.length === 0 && (
+                ))
+              ) : (
                 <div className="text-center py-12 text-muted-foreground">
                   <CalendarDays size={48} className="mx-auto mb-4 opacity-50" />
                   <p>No upcoming rides scheduled</p>

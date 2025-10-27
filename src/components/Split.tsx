@@ -5,11 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DollarSign, Users, Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Split = () => {
   const [totalAmount, setTotalAmount] = useState("50.00");
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [participants, setParticipants] = useState([
-    { id: 1, name: "You", email: "you@example.com", share: 0 },
+    { id: 1, name: "You", email: user?.email || "you@example.com", share: 0 },
   ]);
 
   const addParticipant = () => {
@@ -30,12 +36,41 @@ const Split = () => {
     return (amount / participants.length).toFixed(2);
   };
 
-  const handleSendRequest = () => {
+  const handleSendRequest = async () => {
+    if (!user) {
+      toast.error("Please login to split payments");
+      navigate("/auth");
+      return;
+    }
+
     if (!totalAmount || participants.some((p) => !p.email)) {
       toast.error("Please fill in all fields");
       return;
     }
-    toast.success("Payment split requests sent successfully!");
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("split_payments").insert({
+        creator_id: user.id,
+        total_amount: parseFloat(totalAmount),
+        participants: participants.map((p) => ({
+          name: p.name,
+          email: p.email,
+          share: parseFloat(calculateShare()),
+        })),
+        status: "pending",
+      });
+
+      if (error) throw error;
+
+      toast.success("Payment split requests sent successfully!");
+      setTotalAmount("50.00");
+      setParticipants([{ id: 1, name: "You", email: user.email || "", share: 0 }]);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send requests");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -176,9 +211,10 @@ const Split = () => {
 
                 <Button 
                   onClick={handleSendRequest}
+                  disabled={loading}
                   className="w-full gradient-primary text-primary-foreground hover:shadow-hover transition-smooth text-lg py-6"
                 >
-                  Send Payment Requests
+                  {loading ? "Sending..." : "Send Payment Requests"}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
