@@ -43,7 +43,7 @@ const CreateRide = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.from("rides").insert({
+      const { data, error } = await supabase.from("rides").insert({
         user_id: user.id,
         ride_type: "book",
         pickup_location: bookingData.pickup,
@@ -52,11 +52,14 @@ const CreateRide = () => {
         ride_mode: bookingData.type,
         fare_estimate: 12.50,
         status: "pending",
-      });
+      }).select().single();
 
       if (error) throw error;
 
-      toast.success("Ride booked successfully! Finding nearby drivers...");
+      toast.success(`Ride booked! Your radio code: ${data.radio_code}`, {
+        duration: 5000,
+        description: "Share this code with your driver to sync music"
+      });
       setBookingData({ pickup: "", dropoff: "", time: "", type: "solo" });
     } catch (error: any) {
       toast.error(error.message || "Failed to book ride");
@@ -79,7 +82,7 @@ const CreateRide = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.from("rides").insert({
+      const { data, error } = await supabase.from("rides").insert({
         user_id: user.id,
         ride_type: "offer",
         pickup_location: offerData.route.split("→")[0]?.trim() || "Starting point",
@@ -88,11 +91,14 @@ const CreateRide = () => {
         seats_available: parseInt(offerData.seats),
         vehicle_details: `${offerData.driverName} - ${offerData.vehicle}`,
         status: "pending",
-      });
+      }).select().single();
 
       if (error) throw error;
 
-      toast.success("Ride offer posted! Passengers will be notified.");
+      toast.success(`Ride offered! Your radio code: ${data.radio_code}`, {
+        duration: 5000,
+        description: "Share this code with passengers to sync music"
+      });
       setOfferData({ driverName: "", vehicle: "", seats: "", route: "", timing: "" });
     } catch (error: any) {
       toast.error(error.message || "Failed to post ride offer");

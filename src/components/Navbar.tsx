@@ -35,7 +35,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="#home" className="text-2xl font-bold gradient-primary bg-clip-text text-transparent">
+            <a href="#home" className="text-2xl font-bold text-primary hover:text-primary/90 transition-smooth">
               Velocity
             </a>
           </div>

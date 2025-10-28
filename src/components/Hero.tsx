@@ -22,6 +22,13 @@ const Hero = () => {
     }
   };
 
+  const scrollToAbout = () => {
+    const element = document.querySelector("#about");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
       {/* Animated gradient background */}
@@ -55,6 +62,7 @@ const Hero = () => {
               size="lg" 
               variant="outline" 
               className="border-white text-white hover:bg-white/10 text-lg px-8 py-6"
+              onClick={scrollToAbout}
             >
               Learn More
             </Button>

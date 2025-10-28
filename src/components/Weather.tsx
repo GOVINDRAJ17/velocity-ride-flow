@@ -1,7 +1,15 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Cloud, CloudRain, Sun, Wind, Droplets, Eye } from "lucide-react";
 
 const Weather = () => {
+  const [isFahrenheit, setIsFahrenheit] = useState(true);
+
+  const convertTemp = (tempF: number) => {
+    return isFahrenheit ? tempF : Math.round((tempF - 32) * 5 / 9);
+  };
+
   const currentWeather = {
     temp: 72,
     condition: "Partly Cloudy",
@@ -22,7 +30,17 @@ const Weather = () => {
     <section id="weather" className="py-20 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Weather Forecast</h2>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h2 className="text-4xl font-bold">Weather Forecast</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsFahrenheit(!isFahrenheit)}
+              className="font-semibold"
+            >
+              °{isFahrenheit ? 'F' : 'C'}
+            </Button>
+          </div>
           <p className="text-muted-foreground text-lg">Check conditions before your ride</p>
         </div>
 
@@ -37,9 +55,13 @@ const Weather = () => {
               
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <div className="text-7xl font-bold mb-2">{currentWeather.temp}°F</div>
+                  <div className="text-7xl font-bold mb-2">
+                    {convertTemp(currentWeather.temp)}°{isFahrenheit ? 'F' : 'C'}
+                  </div>
                   <div className="text-xl text-white/90">{currentWeather.condition}</div>
-                  <div className="text-white/70">Feels like {currentWeather.feelsLike}°F</div>
+                  <div className="text-white/70">
+                    Feels like {convertTemp(currentWeather.feelsLike)}°{isFahrenheit ? 'F' : 'C'}
+                  </div>
                 </div>
                 <Cloud size={120} className="text-white/80" />
               </div>
@@ -92,7 +114,9 @@ const Weather = () => {
                         <div className="text-sm text-muted-foreground">{day.condition}</div>
                       </div>
                     </div>
-                    <div className="text-2xl font-bold">{day.temp}°</div>
+                    <div className="text-2xl font-bold">
+                      {convertTemp(day.temp)}°{isFahrenheit ? 'F' : 'C'}
+                    </div>
                   </div>
                 );
               })}

@@ -1,12 +1,19 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, SkipForward, SkipBack, Music, Radio as RadioIcon, Podcast } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Play, Pause, SkipForward, SkipBack, Music, Radio as RadioIcon, Podcast, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const Radio = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState("Summer Vibes Mix");
+  const [rideCode, setRideCode] = useState("");
+  const [connectedRide, setConnectedRide] = useState<any>(null);
+  const { user } = useAuth();
 
   const tracks = [
     { id: 1, title: "Summer Vibes Mix", artist: "DJ Velocity", duration: "45:30", category: "music" },
@@ -14,6 +21,64 @@ const Radio = () => {
     { id: 3, title: "Tech Talk Daily", artist: "Tech Podcast", duration: "38:20", category: "podcast" },
     { id: 4, title: "Morning News Brief", artist: "News Radio", duration: "25:00", category: "news" },
   ];
+
+  useEffect(() => {
+    if (user) {
+      fetchUserRides();
+    }
+  }, [user]);
+
+  const fetchUserRides = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("rides")
+        .select("*")
+        .eq("user_id", user?.id)
+        .eq("status", "pending")
+        .order("ride_date", { ascending: true })
+        .limit(1)
+        .single();
+
+      if (!error && data) {
+        setConnectedRide(data);
+        setRideCode(data.radio_code || "");
+      }
+    } catch (error) {
+      console.log("No active rides found");
+    }
+  };
+
+  const connectToRide = async () => {
+    if (!rideCode.trim()) {
+      toast.error("Please enter a ride code");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("rides")
+        .select("*")
+        .eq("radio_code", rideCode.toUpperCase())
+        .eq("status", "pending")
+        .single();
+
+      if (error) {
+        toast.error("Invalid ride code or ride not found");
+        return;
+      }
+
+      setConnectedRide(data);
+      toast.success("Connected to ride radio channel!");
+    } catch (error) {
+      toast.error("Failed to connect to ride");
+    }
+  };
+
+  const disconnectFromRide = () => {
+    setConnectedRide(null);
+    setRideCode("");
+    toast.info("Disconnected from ride radio");
+  };
 
   return (
     <section id="radio" className="py-20 bg-background">
@@ -23,9 +88,57 @@ const Radio = () => {
           <p className="text-muted-foreground text-lg">Your journey, your soundtrack</p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Ride Connection Card */}
+          <Card className="shadow-soft border-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="text-primary" />
+                Connect to Ride
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {connectedRide ? (
+                <div className="space-y-4">
+                  <div className="bg-gradient-primary text-white p-6 rounded-lg">
+                    <div className="text-sm opacity-90 mb-2">CONNECTED TO RIDE</div>
+                    <div className="text-3xl font-bold mb-2 tracking-wider">{connectedRide.radio_code}</div>
+                    <div className="text-white/80">
+                      {connectedRide.pickup_location} → {connectedRide.dropoff_location}
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={disconnectFromRide}
+                  >
+                    Disconnect from Ride
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Enter ride code (e.g., XL5QP57)"
+                      value={rideCode}
+                      onChange={(e) => setRideCode(e.target.value.toUpperCase())}
+                      className="uppercase"
+                      maxLength={7}
+                    />
+                    <Button onClick={connectToRide} className="gradient-primary text-primary-foreground">
+                      Connect
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Enter your ride's unique code to sync music with your driver and other passengers
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Now Playing */}
-          <Card className="mb-8 shadow-soft border-2 gradient-primary text-white overflow-hidden">
+          <Card className="shadow-soft border-2 gradient-primary text-white overflow-hidden">
             <CardContent className="p-8">
               <div className="flex flex-col md:flex-row items-center gap-6">
                 <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
