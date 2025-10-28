@@ -48,6 +48,7 @@ export type Database = {
           fare_estimate: number | null
           id: string
           pickup_location: string
+          radio_code: string | null
           ride_date: string
           ride_mode: string | null
           ride_type: string
@@ -63,6 +64,7 @@ export type Database = {
           fare_estimate?: number | null
           id?: string
           pickup_location: string
+          radio_code?: string | null
           ride_date: string
           ride_mode?: string | null
           ride_type: string
@@ -78,6 +80,7 @@ export type Database = {
           fare_estimate?: number | null
           id?: string
           pickup_location?: string
+          radio_code?: string | null
           ride_date?: string
           ride_mode?: string | null
           ride_type?: string
@@ -171,7 +174,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_radio_code: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
