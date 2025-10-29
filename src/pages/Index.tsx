@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CreateRide from "@/components/CreateRide";
-import Radio from "@/components/Radio";
+import SocialHub from "@/components/SocialHub";
 import Schedule from "@/components/Schedule";
 import Weather from "@/components/Weather";
 import Location from "@/components/Location";
@@ -17,7 +17,7 @@ const Index = () => {
       <main>
         <Hero />
         <CreateRide />
-        <Radio />
+        <SocialHub />
         <Schedule />
         <Weather />
         <Location />

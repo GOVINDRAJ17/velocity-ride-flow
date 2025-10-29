@@ -8,10 +8,12 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import QRScanner from "./QRScanner";
 
 const Split = () => {
   const [totalAmount, setTotalAmount] = useState("50.00");
   const [loading, setLoading] = useState(false);
+  const [splitId, setSplitId] = useState<string | null>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
   const [participants, setParticipants] = useState([
@@ -50,7 +52,7 @@ const Split = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.from("split_payments").insert({
+      const { data, error } = await supabase.from("split_payments").insert({
         creator_id: user.id,
         total_amount: parseFloat(totalAmount),
         participants: participants.map((p) => ({
@@ -59,11 +61,12 @@ const Split = () => {
           share: parseFloat(calculateShare()),
         })),
         status: "pending",
-      });
+      }).select().single();
 
       if (error) throw error;
 
       toast.success("Payment split requests sent successfully!");
+      setSplitId(data.id);
       setTotalAmount("50.00");
       setParticipants([{ id: 1, name: "You", email: user.email || "", share: 0 }]);
     } catch (error: any) {
@@ -221,7 +224,13 @@ const Split = () => {
                   All participants will receive a payment request via email or SMS
                 </p>
               </CardContent>
-            </Card>
+          </Card>
+
+          {splitId && (
+            <div className="mt-8">
+              <QRScanner splitId={splitId} />
+            </div>
+          )}
           </div>
         </div>
       </div>

@@ -19,6 +19,8 @@ const CreateRide = () => {
     dropoff: "",
     time: "",
     type: "solo",
+    rideName: "",
+    estimatedFare: "12.50",
   });
 
   const [offerData, setOfferData] = useState({
@@ -36,7 +38,7 @@ const CreateRide = () => {
       return;
     }
 
-    if (!bookingData.pickup || !bookingData.dropoff || !bookingData.time) {
+    if (!bookingData.pickup || !bookingData.dropoff || !bookingData.time || !bookingData.rideName) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -46,21 +48,22 @@ const CreateRide = () => {
       const { data, error } = await supabase.from("rides").insert({
         user_id: user.id,
         ride_type: "book",
+        ride_name: bookingData.rideName,
         pickup_location: bookingData.pickup,
         dropoff_location: bookingData.dropoff,
         ride_date: bookingData.time,
         ride_mode: bookingData.type,
-        fare_estimate: 12.50,
+        fare_estimate: parseFloat(bookingData.estimatedFare),
         status: "pending",
       }).select().single();
 
       if (error) throw error;
 
-      toast.success(`Ride booked! Your radio code: ${data.radio_code}`, {
+      toast.success(`Ride created! Your radio code: ${data.radio_code}`, {
         duration: 5000,
-        description: "Share this code with your driver to sync music"
+        description: "Share this code with your passengers to sync music"
       });
-      setBookingData({ pickup: "", dropoff: "", time: "", type: "solo" });
+      setBookingData({ pickup: "", dropoff: "", time: "", type: "solo", rideName: "", estimatedFare: "12.50" });
     } catch (error: any) {
       toast.error(error.message || "Failed to book ride");
     } finally {
@@ -111,15 +114,15 @@ const CreateRide = () => {
     <section id="create" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Create Your Ride</h2>
-          <p className="text-muted-foreground text-lg">Book a ride or offer one to fellow travelers</p>
+          <h2 className="text-4xl font-bold mb-4">Create and Join a Ride</h2>
+          <p className="text-muted-foreground text-lg">Create your own ride or join available rides</p>
         </div>
 
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="book" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="book" className="text-lg py-3">Book a Ride</TabsTrigger>
-              <TabsTrigger value="offer" className="text-lg py-3">Offer a Ride</TabsTrigger>
+              <TabsTrigger value="book" className="text-lg py-3">Create a Ride</TabsTrigger>
+              <TabsTrigger value="offer" className="text-lg py-3">Join a Ride</TabsTrigger>
             </TabsList>
 
             <TabsContent value="book">
@@ -132,6 +135,16 @@ const CreateRide = () => {
                   <CardDescription>Enter your trip details to find the perfect ride</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="rideName">Ride Name</Label>
+                    <Input
+                      id="rideName"
+                      placeholder="e.g., Pool to College"
+                      value={bookingData.rideName}
+                      onChange={(e) => setBookingData({ ...bookingData, rideName: e.target.value })}
+                    />
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="pickup">Pickup Location</Label>
                     <Input
@@ -193,12 +206,20 @@ const CreateRide = () => {
                   </div>
 
                   <div className="bg-muted/50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-sm font-medium">
+                    <div className="space-y-2">
+                      <Label htmlFor="estimatedFare" className="flex items-center gap-2 text-sm font-medium">
                         <DollarSign size={16} />
-                        Estimated Fare
-                      </span>
-                      <span className="text-2xl font-bold text-primary">$12.50</span>
+                        Estimated Fare (Editable)
+                      </Label>
+                      <Input
+                        id="estimatedFare"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={bookingData.estimatedFare}
+                        onChange={(e) => setBookingData({ ...bookingData, estimatedFare: e.target.value })}
+                        className="text-2xl font-bold text-primary bg-background"
+                      />
                     </div>
                   </div>
 

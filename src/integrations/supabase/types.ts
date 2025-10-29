@@ -20,26 +20,105 @@ export type Database = {
           created_at: string | null
           full_name: string | null
           id: string
+          is_verified: boolean | null
+          location_consent: boolean | null
+          location_lat: number | null
+          location_lng: number | null
           phone: string | null
           updated_at: string | null
+          upi_qr_url: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
           full_name?: string | null
           id: string
+          is_verified?: boolean | null
+          location_consent?: boolean | null
+          location_lat?: number | null
+          location_lng?: number | null
           phone?: string | null
           updated_at?: string | null
+          upi_qr_url?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string | null
           full_name?: string | null
           id?: string
+          is_verified?: boolean | null
+          location_consent?: boolean | null
+          location_lat?: number | null
+          location_lng?: number | null
           phone?: string | null
           updated_at?: string | null
+          upi_qr_url?: string | null
         }
         Relationships: []
+      }
+      ride_chat_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message_text: string
+          ride_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message_text: string
+          ride_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message_text?: string
+          ride_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ride_chat_messages_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ride_participants: {
+        Row: {
+          id: string
+          joined_at: string | null
+          ride_id: string
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string | null
+          ride_id: string
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string | null
+          ride_id?: string
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ride_participants_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rides: {
         Row: {
@@ -51,6 +130,7 @@ export type Database = {
           radio_code: string | null
           ride_date: string
           ride_mode: string | null
+          ride_name: string | null
           ride_type: string
           seats_available: number | null
           status: string | null
@@ -67,6 +147,7 @@ export type Database = {
           radio_code?: string | null
           ride_date: string
           ride_mode?: string | null
+          ride_name?: string | null
           ride_type: string
           seats_available?: number | null
           status?: string | null
@@ -83,6 +164,7 @@ export type Database = {
           radio_code?: string | null
           ride_date?: string
           ride_mode?: string | null
+          ride_name?: string | null
           ride_type?: string
           seats_available?: number | null
           status?: string | null
@@ -132,8 +214,10 @@ export type Database = {
         Row: {
           created_at: string | null
           creator_id: string
+          email_sent: boolean | null
           id: string
           participants: Json
+          qr_code_url: string | null
           ride_id: string | null
           status: string | null
           total_amount: number
@@ -142,8 +226,10 @@ export type Database = {
         Insert: {
           created_at?: string | null
           creator_id: string
+          email_sent?: boolean | null
           id?: string
           participants: Json
+          qr_code_url?: string | null
           ride_id?: string | null
           status?: string | null
           total_amount: number
@@ -152,8 +238,10 @@ export type Database = {
         Update: {
           created_at?: string | null
           creator_id?: string
+          email_sent?: boolean | null
           id?: string
           participants?: Json
+          qr_code_url?: string | null
           ride_id?: string | null
           status?: string | null
           total_amount?: number

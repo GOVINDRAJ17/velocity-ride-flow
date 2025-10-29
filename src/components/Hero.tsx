@@ -23,10 +23,8 @@ const Hero = () => {
   };
 
   const scrollToAbout = () => {
-    const element = document.querySelector("#about");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    const aboutSection = document.getElementById('about');
+    aboutSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
