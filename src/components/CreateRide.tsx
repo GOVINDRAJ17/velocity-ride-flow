@@ -128,7 +128,7 @@ const CreateRide = () => {
   };
 
   return (
-    <section id="create" className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-950 dark:to-slate-900/50">
+    <section id="create" className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-slate-900/5 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs sm:text-sm mb-4 sm:mb-6 backdrop-blur-sm">
@@ -141,13 +141,13 @@ const CreateRide = () => {
 
         <div className={`max-w-5xl mx-auto transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <Tabs defaultValue="book" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6 sm:mb-8 h-12 sm:h-14 bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-sm">
+            <TabsList className="grid w-full grid-cols-2 mb-6 sm:mb-8 h-12 sm:h-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
               <TabsTrigger value="book" className="text-base sm:text-lg py-3 font-light hover:scale-105 transition-all duration-300 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:shadow-lg active:scale-95">Book a Ride</TabsTrigger>
               <TabsTrigger value="offer" className="text-base sm:text-lg py-3 font-light hover:scale-105 transition-all duration-300 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-700 data-[state=active]:shadow-lg active:scale-95">Offer a Ride</TabsTrigger>
             </TabsList>
 
             <TabsContent value="book">
-              <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-xl rounded-3xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.01]">
+              <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-xl rounded-3xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.01]">
                 <CardHeader className="pb-6 sm:pb-8">
                   <CardTitle className="flex items-center gap-3 text-xl sm:text-2xl font-light text-slate-900 dark:text-white">
                     <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
@@ -249,7 +249,7 @@ const CreateRide = () => {
             </TabsContent>
 
             <TabsContent value="offer">
-              <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-xl rounded-3xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.01]">
+              <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-xl rounded-3xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.01]">
                 <CardHeader className="pb-6 sm:pb-8">
                   <CardTitle className="flex items-center gap-3 text-xl sm:text-2xl font-light text-slate-900 dark:text-white">
                     <div className="w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center">

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+i rimport { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
+s
 const Schedule = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [schedules, setSchedules] = useState<any[]>([]);
@@ -23,7 +23,7 @@ const Schedule = () => {
       fetchSchedules();
       fetchUpcomingRides();
       const unsubscribe = subscribeRidesRealtime();
-      return () => unsubscribe();
+      return unsubscribe;
     }
   }, [user]);
 
@@ -86,7 +86,9 @@ const Schedule = () => {
         () => fetchUpcomingRides()
       )
       .subscribe();
-    return () => supabase.removeChannel(channel);
+    return () => {
+      supabase.removeChannel(channel);
+    };
   };
 
   const handleAddSchedule = () => {
@@ -124,7 +126,7 @@ const Schedule = () => {
   };
 
   return (
-    <section id="schedule" className="py-16 sm:py-20 lg:py-24 bg-muted/30 dark:bg-background/50">
+    <section id="schedule" className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm mb-4 sm:mb-6 backdrop-blur hover:bg-primary/15 transition-all duration-300 hover:scale-105">
@@ -137,42 +139,40 @@ const Schedule = () => {
 
         <div className={`max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           {/* Calendar */}
-          <Card className="shadow-soft border-2 overflow-hidden rounded-2xl sm:rounded-3xl hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
+          <Card className="shadow-soft border-2 overflow-hidden rounded-3xl hover:shadow-hover transition-all duration-300 hover:scale-[1.02] bg-white/90 dark:bg-slate-800/90">
             <CardHeader className="gradient-primary text-white pb-4 sm:pb-6">
               <CardTitle className="flex items-center gap-2 text-white text-lg sm:text-xl">
                 <CalendarDays className="w-5 h-5 sm:w-6 sm:h-6" />
                 Select Date
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className="bg-card rounded-none p-3 sm:p-4 md:p-6 border-b-2 border-primary/10">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  className="rounded-lg pointer-events-auto mx-auto w-full"
-                  classNames={{
-                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                    month: "space-y-4 w-full",
-                    caption: "flex justify-center pt-1 relative items-center",
-                    caption_label: "text-sm font-medium",
-                    nav: "space-x-1 flex items-center",
-                    nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
-                    table: "w-full border-collapse space-y-1",
-                    head_row: "flex",
-                    head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-                    row: "flex w-full mt-2",
-                    cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                    day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground rounded-md transition-colors",
-                    day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-                    day_today: "bg-accent text-accent-foreground",
-                    day_outside: "text-muted-foreground opacity-50",
-                    day_disabled: "text-muted-foreground opacity-50",
-                  }}
-                />
-              </div>
+            <CardContent className="p-0 h-full">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="rounded-none pointer-events-auto w-full h-full p-4"
+                classNames={{
+                  months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 h-full",
+                  month: "space-y-4 w-full h-full",
+                  caption: "flex justify-center pt-1 relative items-center",
+                  caption_label: "text-sm font-medium",
+                  nav: "space-x-1 flex items-center",
+                  nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                  table: "w-full border-collapse space-y-1 h-full",
+                  head_row: "flex",
+                  head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+                  row: "flex w-full mt-2",
+                  cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                  day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground rounded-md transition-colors",
+                  day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                  day_today: "bg-accent text-accent-foreground",
+                  day_outside: "text-muted-foreground opacity-50",
+                  day_disabled: "text-muted-foreground opacity-50",
+                }}
+              />
 
-              <div className="space-y-3 sm:space-y-4 p-4 sm:p-6">
+              <div className="space-y-3 sm:space-y-4 p-4 sm:p-6 border-t-2 border-primary/10">
                 {date && (
                   <div className="bg-gradient-primary text-white p-4 sm:p-6 rounded-xl shadow-soft">
                     <div className="text-xs sm:text-sm opacity-90 mb-2">Selected Date</div>
@@ -192,7 +192,7 @@ const Schedule = () => {
           </Card>
 
           {/* Upcoming Rides */}
-          <Card className="shadow-soft border-2 rounded-2xl sm:rounded-3xl hover:shadow-hover transition-all duration-300 hover:scale-[1.02]">
+          <Card className="shadow-soft border-2 rounded-3xl hover:shadow-hover transition-all duration-300 hover:scale-[1.02] bg-white/90 dark:bg-slate-800/90">
             <CardHeader className="gradient-primary text-white pb-4 sm:pb-6">
               <CardTitle className="flex items-center gap-2 text-white text-lg sm:text-xl">
                 <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -204,7 +204,7 @@ const Schedule = () => {
                 rides.map((ride) => (
                   <Card
                     key={ride.id}
-                    className="border-2 hover:shadow-soft transition-all duration-300 hover:scale-[1.02] bg-card overflow-hidden rounded-xl cursor-pointer"
+                    className="border-2 hover:shadow-soft transition-all duration-300 hover:scale-[1.02] bg-white/80 dark:bg-slate-700/80 overflow-hidden rounded-xl cursor-pointer"
                   >
                     <div className="bg-gradient-primary/10 p-3 sm:p-4 border-b-2 border-primary/20">
                       <div className="flex items-start justify-between">

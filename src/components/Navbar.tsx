@@ -40,13 +40,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-white/10">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-100/95 border-b border-slate-300/50 dark:bg-slate-800/95 dark:border-slate-600/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <a href="#home" className="inline-flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-xl hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border border-blue-400/20">
-              <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">Velocity</span>
+              <Car className="w-6 h-6 text-white" />
+              <span className="text-white">Velocity</span>
             </a>
           </div>
 
@@ -56,7 +57,7 @@ const Navbar = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/10 group"
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-all duration-300 rounded-xl hover:bg-slate-100/50 dark:hover:bg-white/5 border border-transparent hover:border-slate-200/50 dark:hover:border-white/10 group"
               >
                 {item.icon && <item.icon className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />}
                 {item.name}
@@ -70,18 +71,18 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="text-gray-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-xl"
+              className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 border border-slate-200/50 dark:border-white/10 rounded-xl"
             >
               {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
             </Button>
 
             {user ? (
               <div className="flex items-center space-x-3">
-                <span className="text-gray-300 text-sm">{user.email}</span>
+                <span className="text-slate-600 dark:text-slate-300 text-sm">{user.email}</span>
                 <Button
                   variant="outline"
                   onClick={() => signOut()}
-                  className="border-white/20 text-white hover:bg-white/5 rounded-xl"
+                  className="border-slate-200/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl"
                 >
                   <LogOut size={16} className="mr-2" />
                   Logout
@@ -92,7 +93,7 @@ const Navbar = () => {
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/auth")}
-                  className="text-gray-300 hover:text-white hover:bg-white/5 rounded-xl"
+                  className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl"
                 >
                   Login
                 </Button>
@@ -112,7 +113,7 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-xl"
+              className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 border border-slate-200/50 dark:border-white/10 rounded-xl"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </Button>
@@ -122,23 +123,23 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="lg:hidden bg-black/95 backdrop-blur-2xl border-t border-white/10">
+        <div className="lg:hidden bg-slate-100/95 dark:bg-slate-800/95 border-t border-slate-300/50 dark:border-slate-600/50">
           <div className="px-4 pt-4 pb-6 space-y-3">
             {navItems.map((item) => (
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="flex items-center w-full text-left px-4 py-3 text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-xl transition-all duration-300 border border-transparent hover:border-white/10"
+                className="flex items-center w-full text-left px-4 py-3 text-base font-medium text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl transition-all duration-300 border border-transparent hover:border-slate-200/50 dark:hover:border-white/10"
               >
                 {item.icon && <item.icon className="w-5 h-5 mr-3" />}
                 {item.name}
               </button>
             ))}
-            <div className="pt-6 pb-2 space-y-3 border-t border-white/10">
+            <div className="pt-6 pb-2 space-y-3 border-t border-slate-200/50 dark:border-slate-700/50">
               <Button
                 variant="ghost"
                 onClick={toggleTheme}
-                className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/5 rounded-xl border border-white/10"
+                className="w-full justify-start text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/10"
               >
                 {theme === "light" ? (
                   <>
@@ -155,13 +156,13 @@ const Navbar = () => {
 
               {user ? (
                 <>
-                  <div className="px-4 py-2 text-sm text-gray-400">
+                  <div className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">
                     {user.email}
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => signOut()}
-                    className="w-full border-white/20 text-white hover:bg-white/5 rounded-xl"
+                    className="w-full border-slate-200/50 dark:border-white/20 text-slate-700 dark:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl"
                   >
                     <LogOut size={18} className="mr-2" />
                     Logout
@@ -171,7 +172,7 @@ const Navbar = () => {
                 <>
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-gray-300 hover:text-white hover:bg-white/5 rounded-xl border border-white/10"
+                    className="w-full justify-start text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white hover:bg-slate-100/50 dark:hover:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/10"
                     onClick={() => navigate("/auth")}
                   >
                     Login
