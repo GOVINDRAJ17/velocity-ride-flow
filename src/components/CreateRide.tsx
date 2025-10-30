@@ -111,11 +111,11 @@ const CreateRide = () => {
   };
 
   return (
-    <section id="create" className="py-20 bg-muted/30">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Create and Join a Ride</h2>
-          <p className="text-muted-foreground text-lg">Create your own ride or join available rides</p>
+    <section id="create" className="py-24 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto">
+        <div className="text-center mb-16 animate-on-scroll">
+          <h2 className="text-5xl font-bold mb-4">Create and Join a Ride</h2>
+          <p className="text-muted-foreground text-xl">Create your own ride or join available rides</p>
         </div>
 
         <div className="max-w-4xl mx-auto">
@@ -126,9 +126,9 @@ const CreateRide = () => {
             </TabsList>
 
             <TabsContent value="book">
-              <Card className="shadow-soft border-2">
+              <Card className="shadow-card hover:shadow-hover transition-all hover:scale-[1.01] border-2 rounded-3xl animate-fade-left">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-2xl">
                     <MapPin className="text-primary" />
                     Book Your Ride
                   </CardTitle>
@@ -231,9 +231,9 @@ const CreateRide = () => {
             </TabsContent>
 
             <TabsContent value="offer">
-              <Card className="shadow-soft border-2">
+              <Card className="shadow-card hover:shadow-hover transition-all hover:scale-[1.01] border-2 rounded-3xl animate-fade-right">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-2xl">
                     <Car className="text-primary" />
                     Offer Your Ride
                   </CardTitle>

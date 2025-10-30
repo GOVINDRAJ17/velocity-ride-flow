@@ -75,18 +75,18 @@ const Schedule = () => {
   };
 
   return (
-    <section id="schedule" className="py-20 bg-muted/30">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Schedule Your Rides</h2>
-          <p className="text-muted-foreground text-lg">Plan ahead for a seamless journey</p>
+    <section id="schedule" className="py-24 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto">
+        <div className="text-center mb-16 animate-on-scroll">
+          <h2 className="text-5xl font-bold mb-4">Schedule Your Rides</h2>
+          <p className="text-muted-foreground text-xl">Plan ahead for a seamless journey</p>
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Calendar */}
-          <Card className="shadow-soft border-2 overflow-hidden">
+          <Card className="shadow-card hover:shadow-hover transition-all border-2 overflow-hidden rounded-3xl animate-fade-left">
             <CardHeader className="gradient-primary text-white">
-              <CardTitle className="flex items-center gap-2 text-white">
+              <CardTitle className="flex items-center gap-2 text-white text-2xl">
                 <CalendarDays />
                 Select Date
               </CardTitle>
@@ -139,9 +139,9 @@ const Schedule = () => {
           </Card>
 
           {/* Upcoming Rides */}
-          <Card className="shadow-soft border-2">
+          <Card className="shadow-card hover:shadow-hover transition-all border-2 rounded-3xl animate-fade-right">
             <CardHeader className="gradient-primary text-white">
-              <CardTitle className="flex items-center gap-2 text-white">
+              <CardTitle className="flex items-center gap-2 text-white text-2xl">
                 <Clock />
                 Upcoming Rides
               </CardTitle>
@@ -151,7 +151,7 @@ const Schedule = () => {
                 schedules.map((ride) => (
                   <Card
                     key={ride.id}
-                    className="border-2 hover:shadow-soft transition-smooth bg-card overflow-hidden"
+                    className="border-2 hover:shadow-card transition-smooth bg-card overflow-hidden rounded-2xl"
                   >
                     <div className="bg-gradient-primary/10 p-4 border-b-2 border-primary/20">
                       <div className="flex items-start justify-between">
