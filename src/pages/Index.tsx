@@ -12,9 +12,9 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen w-full bg-background text-foreground pb-20">
       <Navbar />
-      <main>
+      <main className="max-w-md mx-auto">
         <Hero />
         <CreateRide />
         <SocialHub />
@@ -25,7 +25,12 @@ const Index = () => {
         <About />
         <Contact />
       </main>
-      <Footer />
+      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-background/80 backdrop-blur border-t flex items-center justify-around">
+        <a href="/"><span>Home</span></a>
+        <a href="/profile"><span>Profile</span></a>
+        <a href="/checkout"><span>Payments</span></a>
+        <a href="/settings"><span>Settings</span></a>
+      </nav>
     </div>
   );
 };
