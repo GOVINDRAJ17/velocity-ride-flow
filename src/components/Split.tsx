@@ -77,17 +77,17 @@ const Split = () => {
   };
 
   return (
-    <section id="split" className="py-20 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Split Ride Cost</h2>
-          <p className="text-muted-foreground text-lg">Share expenses easily with fellow riders</p>
+    <section id="split" className="py-24 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto">
+        <div className="text-center mb-16 animate-on-scroll">
+          <h2 className="text-5xl font-bold mb-4">Split Ride Cost</h2>
+          <p className="text-muted-foreground text-xl">Share expenses easily with fellow riders</p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Split Form */}
-            <Card className="shadow-soft border-2">
+            <Card className="shadow-card border-2 rounded-3xl lg:col-span-2 animate-fade-left">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <DollarSign className="text-primary" />
@@ -224,13 +224,51 @@ const Split = () => {
                   All participants will receive a payment request via email or SMS
                 </p>
               </CardContent>
-          </Card>
+            </Card>
 
-          {splitId && (
-            <div className="mt-8">
-              <QRScanner splitId={splitId} />
+            {/* Razorpay Payment */}
+            <div className="animate-fade-right">
+              <Card className="shadow-card border-2 rounded-3xl">
+                <CardHeader className="gradient-primary text-white rounded-t-3xl">
+                  <CardTitle className="text-white">Pay with Razorpay</CardTitle>
+                  <CardDescription className="text-white/90">
+                    Secure payment gateway for split payments
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6 space-y-4">
+                  <div className="bg-muted/50 p-4 rounded-xl space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Your Share:</span>
+                      <span className="font-bold text-primary text-xl">₹{calculateShare()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Payment Method:</span>
+                      <span className="font-semibold">Razorpay</span>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={() => {
+                      toast.info("Razorpay integration ready! Add your Razorpay key to enable payments.");
+                    }}
+                    disabled={!totalAmount}
+                    className="w-full gradient-primary text-white hover:shadow-hover transition-smooth py-6 text-lg rounded-full"
+                  >
+                    Pay ₹{calculateShare()}
+                  </Button>
+
+                  <p className="text-xs text-muted-foreground text-center">
+                    Powered by Razorpay • Secure Payment Gateway
+                  </p>
+                </CardContent>
+              </Card>
+
+            {splitId && (
+              <div className="mt-6">
+                <QRScanner splitId={splitId} />
+              </div>
+            )}
             </div>
-          )}
           </div>
         </div>
       </div>

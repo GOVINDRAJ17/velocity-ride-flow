@@ -131,15 +131,15 @@ const RideChat = ({ rideId }: RideChatProps) => {
   };
 
   return (
-    <Card className="shadow-soft border-2">
-      <CardHeader className="gradient-primary text-white">
-        <CardTitle className="flex items-center gap-2 text-white">
+    <Card className="shadow-card border-2 rounded-3xl h-[500px] flex flex-col">
+      <CardHeader className="gradient-primary text-white rounded-t-3xl">
+        <CardTitle className="flex items-center gap-2 text-white text-2xl">
           <MessageSquare />
           Ride Chat
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <ScrollArea className="h-64 mb-4 pr-4" ref={scrollRef}>
+      <CardContent className="p-6 flex-1 flex flex-col">
+        <ScrollArea className="flex-1 mb-4 pr-4" ref={scrollRef}>
           <div className="space-y-3">
             {messages.length === 0 ? (
               <p className="text-center text-muted-foreground text-sm py-8">
@@ -154,19 +154,19 @@ const RideChat = ({ rideId }: RideChatProps) => {
                   }`}
                 >
                   <div
-                    className={`max-w-[75%] rounded-lg p-3 ${
+                    className={`max-w-[70%] rounded-2xl p-3 ${
                       message.sender_id === user?.id
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-primary text-white"
                         : "bg-muted"
                     }`}
                   >
                     {message.sender_id !== user?.id && (
-                      <p className="text-xs font-semibold mb-1">
-                        {message.profiles?.full_name || "User"}
+                      <p className="text-xs font-semibold mb-1 opacity-80">
+                        {message.profiles?.full_name || "Rider"}
                       </p>
                     )}
                     <p className="text-sm break-words">{message.message_text}</p>
-                    <p className="text-xs opacity-70 mt-1">
+                    <p className="text-xs opacity-60 mt-1">
                       {format(new Date(message.created_at), "HH:mm")}
                     </p>
                   </div>
@@ -181,9 +181,15 @@ const RideChat = ({ rideId }: RideChatProps) => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
+            className="flex-1 rounded-full"
             disabled={loading}
           />
-          <Button type="submit" size="icon" disabled={loading || !newMessage.trim()}>
+          <Button 
+            type="submit" 
+            size="icon" 
+            disabled={loading || !newMessage.trim()}
+            className="rounded-full gradient-primary text-white"
+          >
             <Send className="h-4 w-4" />
           </Button>
         </form>
