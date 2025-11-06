@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Calendar, DollarSign, Users, Car } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -45,25 +44,37 @@ const CreateRide = () => {
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.from("rides").insert({
-        user_id: user.id,
-        ride_type: "book",
-        ride_name: bookingData.rideName,
-        pickup_location: bookingData.pickup,
-        dropoff_location: bookingData.dropoff,
-        ride_date: bookingData.time,
-        ride_mode: bookingData.type,
-        fare_estimate: parseFloat(bookingData.estimatedFare),
+      // Save to localStorage
+      const ride = {
+        id: Date.now().toString(),
+        ...bookingData,
+        userId: user.id,
+        createdAt: new Date().toISOString(),
         status: "pending",
-      }).select().single();
+      };
 
-      if (error) throw error;
+      const existingRides = JSON.parse(localStorage.getItem('velocityRides') || '[]');
+      localStorage.setItem('velocityRides', JSON.stringify([...existingRides, ride]));
 
-      toast.success(`Ride created! Your radio code: ${data.radio_code}`, {
-        duration: 5000,
-        description: "Share this code with your passengers to sync music"
-      });
+      // Also save to schedules
+      const schedule = {
+        id: Date.now().toString(),
+        from_location: bookingData.pickup,
+        to_location: bookingData.dropoff,
+        scheduled_date: bookingData.time,
+        status: "confirmed",
+        notes: bookingData.rideName,
+        userId: user.id,
+      };
+
+      const existingSchedules = JSON.parse(localStorage.getItem('velocitySchedules') || '[]');
+      localStorage.setItem('velocitySchedules', JSON.stringify([...existingSchedules, schedule]));
+
+      toast.success("Ride created successfully!");
       setBookingData({ pickup: "", dropoff: "", time: "", type: "solo", rideName: "", estimatedFare: "12.50" });
+      
+      // Trigger a custom event to notify other components
+      window.dispatchEvent(new Event('ridesUpdated'));
     } catch (error: any) {
       toast.error(error.message || "Failed to book ride");
     } finally {
@@ -85,24 +96,29 @@ const CreateRide = () => {
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.from("rides").insert({
-        user_id: user.id,
-        ride_type: "offer",
-        pickup_location: offerData.route.split("→")[0]?.trim() || "Starting point",
-        dropoff_location: offerData.route.split("→")[1]?.trim() || "Destination",
-        ride_date: offerData.timing,
-        seats_available: parseInt(offerData.seats),
-        vehicle_details: `${offerData.driverName} - ${offerData.vehicle}`,
+      const ride = {
+        id: Date.now().toString(),
+        rideName: `${offerData.driverName}'s Ride`,
+        pickup: offerData.route.split("→")[0]?.trim() || "Starting point",
+        dropoff: offerData.route.split("→")[1]?.trim() || "Destination",
+        time: offerData.timing,
+        type: "offer",
+        estimatedFare: "0",
+        driverName: offerData.driverName,
+        vehicle: offerData.vehicle,
+        seats: offerData.seats,
+        userId: user.id,
+        createdAt: new Date().toISOString(),
         status: "pending",
-      }).select().single();
+      };
 
-      if (error) throw error;
+      const existingRides = JSON.parse(localStorage.getItem('velocityRides') || '[]');
+      localStorage.setItem('velocityRides', JSON.stringify([...existingRides, ride]));
 
-      toast.success(`Ride offered! Your radio code: ${data.radio_code}`, {
-        duration: 5000,
-        description: "Share this code with passengers to sync music"
-      });
+      toast.success("Ride offered successfully!");
       setOfferData({ driverName: "", vehicle: "", seats: "", route: "", timing: "" });
+      
+      window.dispatchEvent(new Event('ridesUpdated'));
     } catch (error: any) {
       toast.error(error.message || "Failed to post ride offer");
     } finally {

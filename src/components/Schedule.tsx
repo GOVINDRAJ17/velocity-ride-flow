@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays, Clock, MapPin, Plus } from "lucide-react";
 import { format } from "date-fns";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -20,21 +19,26 @@ const Schedule = () => {
     if (user) {
       fetchSchedules();
     }
+
+    // Listen for ride updates
+    const handleRidesUpdate = () => {
+      fetchSchedules();
+    };
+    
+    window.addEventListener('ridesUpdated', handleRidesUpdate);
+    return () => window.removeEventListener('ridesUpdated', handleRidesUpdate);
   }, [user]);
 
-  const fetchSchedules = async () => {
+  const fetchSchedules = () => {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase
-        .from("schedules")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("scheduled_date", { ascending: true })
-        .limit(5);
-
-      if (error) throw error;
-      setSchedules(data || []);
+      const storedSchedules = localStorage.getItem('velocitySchedules');
+      if (storedSchedules) {
+        const allSchedules = JSON.parse(storedSchedules);
+        const userSchedules = allSchedules.filter((s: any) => s.userId === user.id);
+        setSchedules(userSchedules);
+      }
     } catch (error: any) {
       console.error("Error fetching schedules:", error);
     }
@@ -46,7 +50,7 @@ const Schedule = () => {
       navigate("/auth");
       return;
     }
-    toast.info("Schedule feature coming soon!");
+    toast.info("Create a ride in the 'Create Ride' section to add to your schedule!");
   };
 
   const handleModify = (id: string) => {
@@ -58,15 +62,16 @@ const Schedule = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from("schedules")
-        .update({ status: "cancelled" })
-        .eq("id", id);
-
-      if (error) throw error;
-
-      toast.success("Schedule cancelled");
-      fetchSchedules();
+      const storedSchedules = localStorage.getItem('velocitySchedules');
+      if (storedSchedules) {
+        const allSchedules = JSON.parse(storedSchedules);
+        const updatedSchedules = allSchedules.map((s: any) => 
+          s.id === id ? { ...s, status: "cancelled" } : s
+        );
+        localStorage.setItem('velocitySchedules', JSON.stringify(updatedSchedules));
+        toast.success("Schedule cancelled");
+        fetchSchedules();
+      }
     } catch (error: any) {
       toast.error(error.message || "Failed to cancel");
     } finally {

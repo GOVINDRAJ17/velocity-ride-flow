@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, MessageSquare, Send, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Mail, MessageSquare, Send } from "lucide-react";
 import { toast } from "sonner";
 
 const Contact = () => {
@@ -21,18 +21,14 @@ const Contact = () => {
       return;
     }
     
-    // In a real app, this would send to backend
-    console.log("Contact form submitted:", formData);
-    toast.success("Message sent! We'll get back to you soon.");
+    const subject = `Contact from ${formData.name}`;
+    const body = `Name: ${formData.name}%0D%0AEmail: ${formData.email}%0D%0A%0D%0AMessage:%0D%0A${formData.message}`;
+    window.location.href = `mailto:boradegovindraj17@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+    
+    toast.success("Opening your email client...");
     setFormData({ name: "", email: "", message: "" });
   };
 
-  const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-  ];
 
   return (
     <section id="contact" className="py-20 bg-background">
@@ -129,29 +125,6 @@ const Contact = () => {
               </CardContent>
             </Card>
 
-            <Card className="shadow-soft border-2 gradient-primary text-white">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-4">Follow Us</h3>
-                <p className="mb-6 text-white/90">
-                  Stay connected and get the latest updates from Velocity
-                </p>
-                <div className="flex gap-4">
-                  {socialLinks.map((social, index) => {
-                    const Icon = social.icon;
-                    return (
-                      <a
-                        key={index}
-                        href={social.href}
-                        aria-label={social.label}
-                        className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-smooth"
-                      >
-                        <Icon size={20} />
-                      </a>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
