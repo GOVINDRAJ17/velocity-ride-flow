@@ -8,6 +8,7 @@ import { MapPin, Calendar, DollarSign, Users, Car } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const CreateRide = () => {
   const { user } = useAuth();
@@ -44,38 +45,32 @@ const CreateRide = () => {
 
     setLoading(true);
     try {
-      // Save to localStorage
-      const ride = {
-        id: Date.now().toString(),
-        ...bookingData,
-        userId: user.id,
-        createdAt: new Date().toISOString(),
-        status: "pending",
+      const newRide = {
+        rideName: bookingData.rideName,
+        pickup: bookingData.pickup,
+        dropoff: bookingData.dropoff,
+        time: bookingData.time,
+        type: bookingData.type,
+        estimatedFare: bookingData.estimatedFare,
+        date: bookingData.time,
       };
 
-      const existingRides = JSON.parse(localStorage.getItem('velocityRides') || '[]');
-      localStorage.setItem('velocityRides', JSON.stringify([...existingRides, ride]));
+      const { data, error } = await supabase.functions.invoke('ride-matching', {
+        body: {
+          action: 'CREATE_RIDE',
+          ride: newRide,
+          userId: user.id
+        }
+      });
 
-      // Also save to schedules
-      const schedule = {
-        id: Date.now().toString(),
-        from_location: bookingData.pickup,
-        to_location: bookingData.dropoff,
-        scheduled_date: bookingData.time,
-        status: "confirmed",
-        notes: bookingData.rideName,
-        userId: user.id,
-      };
-
-      const existingSchedules = JSON.parse(localStorage.getItem('velocitySchedules') || '[]');
-      localStorage.setItem('velocitySchedules', JSON.stringify([...existingSchedules, schedule]));
+      if (error) throw error;
 
       toast.success("Ride created successfully!");
       setBookingData({ pickup: "", dropoff: "", time: "", type: "solo", rideName: "", estimatedFare: "12.50" });
       
-      // Trigger a custom event to notify other components
       window.dispatchEvent(new Event('ridesUpdated'));
     } catch (error: any) {
+      console.error('Error creating ride:', error);
       toast.error(error.message || "Failed to book ride");
     } finally {
       setLoading(false);
@@ -96,8 +91,7 @@ const CreateRide = () => {
 
     setLoading(true);
     try {
-      const ride = {
-        id: Date.now().toString(),
+      const newRide = {
         rideName: `${offerData.driverName}'s Ride`,
         pickup: offerData.route.split("→")[0]?.trim() || "Starting point",
         dropoff: offerData.route.split("→")[1]?.trim() || "Destination",
@@ -107,19 +101,25 @@ const CreateRide = () => {
         driverName: offerData.driverName,
         vehicle: offerData.vehicle,
         seats: offerData.seats,
-        userId: user.id,
-        createdAt: new Date().toISOString(),
-        status: "pending",
+        date: offerData.timing,
       };
 
-      const existingRides = JSON.parse(localStorage.getItem('velocityRides') || '[]');
-      localStorage.setItem('velocityRides', JSON.stringify([...existingRides, ride]));
+      const { data, error } = await supabase.functions.invoke('ride-matching', {
+        body: {
+          action: 'CREATE_RIDE',
+          ride: newRide,
+          userId: user.id
+        }
+      });
+
+      if (error) throw error;
 
       toast.success("Ride offered successfully!");
       setOfferData({ driverName: "", vehicle: "", seats: "", route: "", timing: "" });
       
       window.dispatchEvent(new Event('ridesUpdated'));
     } catch (error: any) {
+      console.error('Error offering ride:', error);
       toast.error(error.message || "Failed to post ride offer");
     } finally {
       setLoading(false);

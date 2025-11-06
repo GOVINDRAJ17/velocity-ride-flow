@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Schedule = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -29,15 +30,30 @@ const Schedule = () => {
     return () => window.removeEventListener('ridesUpdated', handleRidesUpdate);
   }, [user]);
 
-  const fetchSchedules = () => {
+  const fetchSchedules = async () => {
     if (!user) return;
 
     try {
-      const storedSchedules = localStorage.getItem('velocitySchedules');
-      if (storedSchedules) {
-        const allSchedules = JSON.parse(storedSchedules);
-        const userSchedules = allSchedules.filter((s: any) => s.userId === user.id);
-        setSchedules(userSchedules);
+      const { data, error } = await supabase.functions.invoke('ride-matching', {
+        body: {
+          action: 'GET_USER_RIDES',
+          userId: user.id
+        }
+      });
+
+      if (error) throw error;
+      
+      if (data?.rides) {
+        const formattedSchedules = data.rides.map((r: any) => ({
+          id: r.id,
+          from_location: r.pickup,
+          to_location: r.dropoff,
+          scheduled_date: r.time || r.date,
+          status: r.status === 'active' ? 'confirmed' : r.status,
+          notes: r.rideName,
+          userId: r.userId,
+        }));
+        setSchedules(formattedSchedules);
       }
     } catch (error: any) {
       console.error("Error fetching schedules:", error);
@@ -62,17 +78,19 @@ const Schedule = () => {
 
     setLoading(true);
     try {
-      const storedSchedules = localStorage.getItem('velocitySchedules');
-      if (storedSchedules) {
-        const allSchedules = JSON.parse(storedSchedules);
-        const updatedSchedules = allSchedules.map((s: any) => 
-          s.id === id ? { ...s, status: "cancelled" } : s
-        );
-        localStorage.setItem('velocitySchedules', JSON.stringify(updatedSchedules));
-        toast.success("Schedule cancelled");
-        fetchSchedules();
-      }
+      const { error } = await supabase.functions.invoke('ride-matching', {
+        body: {
+          action: 'DELETE_RIDE',
+          ride: { rideId: id }
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success("Schedule cancelled");
+      fetchSchedules();
     } catch (error: any) {
+      console.error('Error cancelling ride:', error);
       toast.error(error.message || "Failed to cancel");
     } finally {
       setLoading(false);

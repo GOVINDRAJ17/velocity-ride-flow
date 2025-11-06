@@ -5,6 +5,7 @@ import { MapPin, Navigation, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import mumbaiMap from "@/assets/mumbai-map.jpg";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Ride {
   id: string;
@@ -26,13 +27,34 @@ const Location = () => {
 
   useEffect(() => {
     loadRides();
-  }, []);
+    
+    // Listen for ride updates
+    const handleRidesUpdated = () => loadRides();
+    window.addEventListener('ridesUpdated', handleRidesUpdated);
+    
+    return () => window.removeEventListener('ridesUpdated', handleRidesUpdated);
+  }, [location]);
 
-  const loadRides = () => {
-    const storedRides = localStorage.getItem('velocityRides');
-    if (storedRides) {
-      const rides: Ride[] = JSON.parse(storedRides);
-      setNearbyRides(rides);
+  const loadRides = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ride-matching', {
+        body: {
+          action: 'GET_MATCHED_RIDES',
+          ride: {
+            pickup: '',
+            dropoff: '',
+            location: location
+          }
+        }
+      });
+
+      if (error) throw error;
+      
+      if (data?.rides) {
+        setNearbyRides(data.rides);
+      }
+    } catch (error) {
+      console.error('Error loading rides:', error);
     }
   };
 
@@ -41,10 +63,10 @@ const Location = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          // Reverse geocoding would happen here in production
           setLocation(`${latitude.toFixed(4)}, ${longitude.toFixed(4)} - Mumbai, India`);
           setLocationEnabled(true);
           toast.success("Location enabled!");
+          loadRides();
         },
         (error) => {
           toast.error("Location access denied");
