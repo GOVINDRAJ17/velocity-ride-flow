@@ -18,6 +18,12 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization') || '';
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
     const { action, ride, userId } = await req.json();
     console.log('Action:', action, 'User:', userId);
 
@@ -36,12 +42,12 @@ serve(async (req) => {
           status: 'pending'
         };
         
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
           .from('rides')
           .insert([rideData])
           .select()
           .single();
-        
+
         if (error) throw error;
         console.log('Ride created:', data.id);
         
@@ -55,12 +61,12 @@ serve(async (req) => {
         const { pickup, dropoff } = ride || {};
         
         // Get all available rides
-        const { data: allRides, error } = await supabase
+        const { data: allRides, error } = await supabaseClient
           .from('rides')
-          .select('*, profiles!rides_user_id_fkey(full_name, avatar_url)')
+          .select('*')
           .eq('ride_type', 'offer')
           .eq('status', 'pending');
-        
+
         if (error) throw error;
         
         // Matching algorithm
@@ -98,13 +104,13 @@ serve(async (req) => {
       }
 
       case 'GET_USER_RIDES': {
-        const { data: userRides, error } = await supabase
+        const { data: userRides, error } = await supabaseClient
           .from('rides')
           .select('*')
           .eq('user_id', userId)
           .neq('status', 'deleted')
           .order('created_at', { ascending: false });
-        
+
         if (error) throw error;
         console.log('User rides:', userRides?.length || 0);
         
@@ -116,11 +122,11 @@ serve(async (req) => {
 
       case 'DELETE_RIDE': {
         const { rideId } = ride;
-        const { error } = await supabase
+        const { error } = await supabaseClient
           .from('rides')
           .update({ status: 'deleted' })
           .eq('id', rideId);
-        
+
         if (error) throw error;
         console.log('Ride deleted:', rideId);
         
