@@ -120,8 +120,64 @@ export type Database = {
           },
         ]
       }
+      ride_reviews: {
+        Row: {
+          created_at: string | null
+          id: string
+          rating: number
+          review_text: string | null
+          reviewed_user_id: string
+          reviewer_id: string
+          ride_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rating: number
+          review_text?: string | null
+          reviewed_user_id: string
+          reviewer_id: string
+          ride_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rating?: number
+          review_text?: string | null
+          reviewed_user_id?: string
+          reviewer_id?: string
+          ride_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ride_reviews_reviewed_user_id_fkey"
+            columns: ["reviewed_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ride_reviews_reviewer_id_fkey"
+            columns: ["reviewer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ride_reviews_ride_id_fkey"
+            columns: ["ride_id"]
+            isOneToOne: false
+            referencedRelation: "rides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rides: {
         Row: {
+          completed_at: string | null
           created_at: string | null
           dropoff_location: string
           fare_estimate: number | null
@@ -139,6 +195,7 @@ export type Database = {
           vehicle_details: string | null
         }
         Insert: {
+          completed_at?: string | null
           created_at?: string | null
           dropoff_location: string
           fare_estimate?: number | null
@@ -156,6 +213,7 @@ export type Database = {
           vehicle_details?: string | null
         }
         Update: {
+          completed_at?: string | null
           created_at?: string | null
           dropoff_location?: string
           fare_estimate?: number | null

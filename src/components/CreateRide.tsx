@@ -50,7 +50,7 @@ const CreateRide = () => {
         pickup: bookingData.pickup,
         dropoff: bookingData.dropoff,
         time: bookingData.time,
-        type: bookingData.type,
+        type: "request",
         estimatedFare: bookingData.estimatedFare,
         date: bookingData.time,
       };

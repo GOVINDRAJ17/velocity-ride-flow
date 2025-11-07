@@ -1,12 +1,10 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CreateRide from "@/components/CreateRide";
-import SocialHub from "@/components/SocialHub";
 import Schedule from "@/components/Schedule";
-import Weather from "@/components/Weather";
+import RideHistory from "@/components/RideHistory";
 import Location from "@/components/Location";
-import Split from "@/components/Split";
-import About from "@/components/About";
+import SocialHub from "@/components/SocialHub";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -17,12 +15,10 @@ const Index = () => {
       <main>
         <Hero />
         <CreateRide />
-        <SocialHub />
         <Schedule />
-        <Weather />
+        <RideHistory />
         <Location />
-        <Split />
-        <About />
+        <SocialHub />
         <Contact />
       </main>
       <Footer />
