@@ -24,13 +24,20 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: authHeader } } }
     );
-    const { action, ride, userId } = await req.json();
-    console.log('Action:', action, 'User:', userId);
+    
+    // Get authenticated user from JWT
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      throw new Error('Unauthorized');
+    }
+    
+    const { action, ride } = await req.json();
+    console.log('Action:', action, 'User:', user.id);
 
     switch (action) {
       case 'CREATE_RIDE': {
         const rideData = {
-          user_id: userId,
+          user_id: user.id,
           ride_name: ride.rideName,
           pickup_location: ride.pickup,
           dropoff_location: ride.dropoff,
@@ -107,7 +114,7 @@ serve(async (req) => {
         const { data: userRides, error } = await supabaseClient
           .from('rides')
           .select('*')
-          .eq('user_id', userId)
+          .eq('user_id', user.id)
           .neq('status', 'deleted')
           .order('created_at', { ascending: false });
 
