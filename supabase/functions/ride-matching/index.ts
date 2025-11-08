@@ -34,8 +34,15 @@ serve(async (req) => {
     }
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser(jwt);
     if (authError || !user) {
+      console.error('Auth error/getUser failed:', authError);
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+
+    // Admin client to bypass RLS for server-side operations (we still scope by user.id in queries)
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
 
     const { action, ride } = await req.json();
     console.log('Action:', action, 'User:', user.id);
@@ -47,7 +54,7 @@ serve(async (req) => {
           ride_name: ride.rideName,
           pickup_location: ride.pickup,
           dropoff_location: ride.dropoff,
-          ride_date: new Date(ride.time),
+          ride_date: new Date(ride.time || ride.date),
           ride_type: ride.type === 'offer' ? 'offer' : 'request',
           seats_available: ride.seats ? parseInt(ride.seats) : 1,
           fare_estimate: parseFloat(ride.estimatedFare || '0'),
@@ -55,7 +62,7 @@ serve(async (req) => {
           status: 'pending'
         };
         
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabaseAdmin
           .from('rides')
           .insert([rideData])
           .select()
@@ -74,7 +81,7 @@ serve(async (req) => {
         const { pickup, dropoff } = ride || {};
         
         // Get all available rides
-        const { data: allRides, error } = await supabaseClient
+        const { data: allRides, error } = await supabaseAdmin
           .from('rides')
           .select('*')
           .eq('ride_type', 'offer')
@@ -117,7 +124,7 @@ serve(async (req) => {
       }
 
       case 'GET_USER_RIDES': {
-        const { data: userRides, error } = await supabaseClient
+        const { data: userRides, error } = await supabaseAdmin
           .from('rides')
           .select('*')
           .eq('user_id', user.id)
@@ -135,10 +142,11 @@ serve(async (req) => {
 
       case 'DELETE_RIDE': {
         const { rideId } = ride;
-        const { error } = await supabaseClient
+        const { error } = await supabaseAdmin
           .from('rides')
           .update({ status: 'deleted' })
-          .eq('id', rideId);
+          .eq('id', rideId)
+          .eq('user_id', user.id);
 
         if (error) throw error;
         console.log('Ride deleted:', rideId);
