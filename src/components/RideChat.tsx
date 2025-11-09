@@ -167,7 +167,7 @@ const RideChat = ({ rideId }: RideChatProps) => {
                     )}
                     <p className="text-sm break-words">{message.message_text}</p>
                     <p className="text-xs opacity-60 mt-1">
-                      {format(new Date(message.created_at), "HH:mm")}
+                      {message.created_at ? format(new Date(message.created_at), "HH:mm") : "--:--"}
                     </p>
                   </div>
                 </div>

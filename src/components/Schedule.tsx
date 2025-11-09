@@ -44,15 +44,22 @@ const Schedule = () => {
       if (error) throw error;
       
       if (data?.rides) {
-        const formattedSchedules = data.rides.map((r: any) => ({
-          id: r.id,
-          from_location: r.pickup,
-          to_location: r.dropoff,
-          scheduled_date: r.time || r.date,
-          status: r.status === 'active' ? 'confirmed' : r.status,
-          notes: r.rideName,
-          userId: r.userId,
-        }));
+        const formattedSchedules = data.rides.map((r: any) => {
+          const rideDate = r.ride_date
+            ? new Date(r.ride_date)
+            : (r.time ? new Date(r.time) : (r.date ? new Date(r.date) : null));
+          const validISO = rideDate && !isNaN(rideDate.getTime()) ? rideDate.toISOString() : null;
+
+          return {
+            id: r.id,
+            from_location: r.pickup_location || r.pickup || "Unknown pickup",
+            to_location: r.dropoff_location || r.dropoff || "Unknown dropoff",
+            scheduled_date: validISO,
+            status: r.status === 'active' ? 'confirmed' : (r.status || 'pending'),
+            notes: r.ride_name || r.rideName || '',
+            userId: r.user_id || r.userId,
+          };
+        });
         setSchedules(formattedSchedules);
       }
     } catch (error: any) {
@@ -146,7 +153,7 @@ const Schedule = () => {
                 {date && (
                   <div className="bg-gradient-primary text-white p-6 rounded-xl shadow-soft">
                     <div className="text-sm opacity-90 mb-2">Selected Date</div>
-                    <div className="text-2xl font-bold">{format(date, "EEEE, MMMM d, yyyy")}</div>
+                    <div className="text-2xl font-bold">{date ? format(date, "EEEE, MMMM d, yyyy") : "Select a date"}</div>
                   </div>
                 )}
                 
@@ -206,11 +213,11 @@ const Schedule = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex items-center gap-2 text-sm">
                           <CalendarDays size={16} className="text-primary" />
-                          <span className="font-medium">{format(new Date(ride.scheduled_date), "MMM d, yyyy")}</span>
+                          <span className="font-medium">{ride.scheduled_date ? format(new Date(ride.scheduled_date), "MMM d, yyyy") : "Date TBD"}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <Clock size={16} className="text-primary" />
-                          <span className="font-medium">{format(new Date(ride.scheduled_date), "h:mm a")}</span>
+                          <span className="font-medium">{ride.scheduled_date ? format(new Date(ride.scheduled_date), "h:mm a") : "--"}</span>
                         </div>
                       </div>
                       

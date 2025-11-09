@@ -221,7 +221,7 @@ const RideHistory = () => {
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
                               <span>
-                                {new Date(ride.ride_date).toLocaleDateString("en-IN")}
+                                {ride.ride_date ? new Date(ride.ride_date).toLocaleDateString("en-IN") : "—"}
                               </span>
                             </div>
                             <div className="flex items-center gap-1 font-semibold">
